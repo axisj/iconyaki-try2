@@ -1,6 +1,7 @@
 import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
+import { v4 as uuidv4 } from "uuid";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -22,7 +23,11 @@ export async function POST(request: NextRequest) {
 
   // With the file data in the buffer, you can do whatever you want with it.
   // For this, we'll just write it to the filesystem in a new location
-  const path = join(process.cwd(), "uploads", file.name);
+
+  // console.log(file.name);
+  const fileName = file.name;
+  const saveFileName = uuidv4();
+  const path = join(process.cwd(), "uploads", saveFileName);
 
   await writeFile(path, buffer);
   console.log(`open ${path} to see the uploaded file`);
