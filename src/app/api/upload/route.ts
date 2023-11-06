@@ -1,16 +1,31 @@
-export async function GET(request: Request) {
+import { writeFile } from "fs/promises";
+import { NextRequest, NextResponse } from "next/server";
+import { join } from "path";
+
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
 
-  return Response.json({ test: "upload" });
+  return NextResponse.json({ success: true });
 }
 
-export async function POST(request: Request) {
-  const formData = await request.formData();
+export async function POST(request: NextRequest) {
+  const data = await request.formData();
+  const file: File | null = data.get("file") as unknown as File;
 
-  const file = formData.get("file");
+  if (!file) {
+    return NextResponse.json({ success: false });
+  }
 
-  console.log(file);
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
 
-  return Response.json({ result: "OK" });
+  // With the file data in the buffer, you can do whatever you want with it.
+  // For this, we'll just write it to the filesystem in a new location
+  const path = join(process.cwd(), "uploads", file.name);
+
+  await writeFile(path, buffer);
+  console.log(`open ${path} to see the uploaded file`);
+
+  return NextResponse.json({ success: true });
 }

@@ -5,7 +5,7 @@ export default function Page() {
   return (
     <WrapSection>
       <h1>upload</h1>
-      <MultiFileUploader />
+      <MultiFileUploader accept={"image/svg+xml"} />
     </WrapSection>
   );
 }
