@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import xml2js from "xml2js";
+import { FileDto } from "@/types";
 
 export async function POST(request: NextRequest) {
   const data = await request.formData();
@@ -16,8 +17,10 @@ export async function POST(request: NextRequest) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
   const fileName = file.name;
+  const fileSize = file.size;
   const rawContents = buffer.toString("utf-8");
-  const jsonContents = await xml2js.parseStringPromise(rawContents);
+  const jsonContents = (await xml2js.parseStringPromise(rawContents)) as Record<string, any>;
+  const uploadedFile: FileDto = { fileName, fileSize, rawContents, jsonContents };
 
-  return NextResponse.json({ fileName, rawContents, jsonContents });
+  return NextResponse.json(uploadedFile);
 }

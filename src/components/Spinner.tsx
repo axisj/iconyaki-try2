@@ -1,30 +1,15 @@
 import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import React from "react";
-import colors from "@/styles/colors";
 
 interface ISPinIconProps {
   size?: number;
   strokeWidth?: number;
 }
 
-export const Spinner: React.FC<ISPinIconProps> = ({
-  size = 20,
-  strokeWidth = 5,
-}) => (
-  <Svg
-    className="spin-icon"
-    viewBox="0 0 50 50"
-    style={{ width: size, height: size }}
-  >
-    <circle
-      className="path"
-      cx="25"
-      cy="25"
-      r="20"
-      fill="none"
-      strokeWidth={strokeWidth}
-    />
+export const Spinner: React.FC<ISPinIconProps> = ({ size = 20, strokeWidth = 5 }) => (
+  <Svg className='spin-icon' viewBox='0 0 50 50' style={{ width: size, height: size }}>
+    <circle className='path' cx='25' cy='25' r='20' fill='none' strokeWidth={strokeWidth} />
   </Svg>
 );
 
@@ -55,7 +40,7 @@ const Svg = styled.svg`
   height: 20px;
 
   .path {
-    stroke: ${colors.prn_azul};
+    stroke: #1890ff;
     stroke-linecap: round;
     animation: ${AniSpinIconDash} 1.5s ease-in-out infinite;
   }

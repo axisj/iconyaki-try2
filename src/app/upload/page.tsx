@@ -1,11 +1,10 @@
 import { WrapSection } from "@/styles/wrapper";
-import { MultiFileUploader } from "@/components/MultiFileUploader";
+import { SvgUploader } from "@/components/SvgUploader";
 
 export default function Page() {
   return (
     <WrapSection>
-      <h1>upload</h1>
-      <MultiFileUploader accept={"image/svg+xml"} />
+      <SvgUploader accept={"image/svg+xml"} />
     </WrapSection>
   );
 }

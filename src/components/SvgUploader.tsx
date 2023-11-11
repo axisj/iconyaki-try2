@@ -3,13 +3,15 @@ import * as React from "react";
 import styled from "@emotion/styled";
 import { FileDto } from "@/types";
 import { uploadFile } from "@/components/uploadFile";
-import { Button, Space } from "antd";
+import { Button, Card, Descriptions, Input, Space } from "antd";
+import { toByte } from "@/util/toByte";
+import { SMixinFlexColumn } from "@/styles/emotion";
 
 interface Props {
   accept?: string;
 }
 
-export function MultiFileUploader({ accept = "*/*" }: Props) {
+export function SvgUploader({ accept = "*/*" }: Props) {
   const [spinning, setSpinning] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [uploadedFiles, setUploadedFiles] = React.useState<FileDto[]>([]);
@@ -77,7 +79,7 @@ export function MultiFileUploader({ accept = "*/*" }: Props) {
 
       <Space size={5}>
         <Button type={"primary"} onClick={handleButtonClick} loading={spinning}>
-          {"UPLOAD"}
+          {"Select SVG Files"}
           {spinning && `(${progress}%)`}
         </Button>
         {spinning && (
@@ -93,13 +95,37 @@ export function MultiFileUploader({ accept = "*/*" }: Props) {
         )}
       </Space>
 
-      <div>
+      <FileList>
         {uploadedFiles.map((file, key) => (
-          <div key={key}>{JSON.stringify(file)}</div>
+          <UploadedFile
+            key={key}
+            title={file.fileName}
+            extra={
+              <Button type={"text"} danger>
+                삭제
+              </Button>
+            }
+          >
+            <Descriptions>
+              <Descriptions.Item label='FileSize'>{toByte(file.fileSize)}</Descriptions.Item>
+            </Descriptions>
+
+            <Input.TextArea rows={6} value={file.rawContents} />
+          </UploadedFile>
         ))}
-      </div>
+      </FileList>
     </Container>
   );
 }
 
-const Container = styled.div``;
+const Container = styled.div`
+  ${SMixinFlexColumn("flex-start", "flex-start")};
+  gap: 1rem;
+`;
+
+const FileList = styled.div`
+  ${SMixinFlexColumn("", "stretch")};
+  gap: 1rem;
+`;
+
+const UploadedFile = styled(Card)``;
