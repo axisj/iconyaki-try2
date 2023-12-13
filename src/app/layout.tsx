@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { WrapMain } from "@/styles/wrapper";
 import { Providers } from "@/app/providers";
+import { WindowResize } from "@/components/WindowResize";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <WrapMain>{children}</WrapMain>
         </Providers>
+        <WindowResize />
       </body>
     </html>
   );
