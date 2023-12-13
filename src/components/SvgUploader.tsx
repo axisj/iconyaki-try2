@@ -2,10 +2,13 @@
 import * as React from "react";
 import styled from "@emotion/styled";
 import { FileDto } from "@/types";
-import { uploadFile } from "@/components/uploadFile";
+import { uploadFile } from "@/service/uploadFile";
 import { Button, Card, Descriptions, Input, Space } from "antd";
 import { toByte } from "@/util/toByte";
 import { SMixinFlexColumn } from "@/styles/emotion";
+import { dangerouslySetInnerHTML } from "@/util/dangerouslySetInnerHTML";
+import { generateIcon } from "@/service/generateIcon";
+import { pascalCase } from "pascal-case";
 
 interface Props {
   accept?: string;
@@ -15,6 +18,7 @@ export function SvgUploader({ accept = "*/*" }: Props) {
   const [spinning, setSpinning] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [uploadedFiles, setUploadedFiles] = React.useState<FileDto[]>([]);
+  const [uploading, setUploading] = React.useState(false);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const abortController = React.useRef(new AbortController()).current;
@@ -69,9 +73,31 @@ export function SvgUploader({ accept = "*/*" }: Props) {
     [abortController.signal, uploadedFiles],
   );
 
+  const removeFile = React.useCallback(
+    (index: number) => {
+      setUploadedFiles(uploadedFiles.filter((_, i) => i !== index));
+    },
+    [uploadedFiles],
+  );
+
   const handleButtonClick = React.useCallback(() => {
     inputRef.current?.click();
   }, []);
+
+  const handleGenerateIcon = React.useCallback(async () => {
+    setUploading(true);
+    for await (const file of uploadedFiles) {
+      if (file.fileName && file.rawContents) {
+        await generateIcon({
+          fileName: file.fileName,
+          contents: file.rawContents,
+          signal: abortController.signal,
+        });
+      }
+    }
+    setUploading(false);
+    setUploadedFiles([]);
+  }, [abortController.signal, uploadedFiles]);
 
   return (
     <Container>
@@ -101,19 +127,30 @@ export function SvgUploader({ accept = "*/*" }: Props) {
             key={key}
             title={file.fileName}
             extra={
-              <Button type={"text"} danger>
+              <Button type={"text"} danger onClick={() => removeFile(key)}>
                 삭제
               </Button>
             }
           >
             <Descriptions>
-              <Descriptions.Item label='FileSize'>{toByte(file.fileSize)}</Descriptions.Item>
+              <Descriptions.Item label='Component Name'>{pascalCase(file.fileName) + ".tsx"}</Descriptions.Item>
+              <Descriptions.Item label='File Size'>{toByte(file.fileSize)}</Descriptions.Item>
             </Descriptions>
+
+            <IconPreview {...dangerouslySetInnerHTML(file.rawContents)} />
 
             <Input.TextArea rows={6} value={file.rawContents} />
           </UploadedFile>
         ))}
       </FileList>
+
+      {uploadedFiles.length > 0 && (
+        <Space>
+          <Button type={"primary"} onClick={() => handleGenerateIcon()} loading={uploading}>
+            Generate Icon
+          </Button>
+        </Space>
+      )}
     </Container>
   );
 }
@@ -126,6 +163,19 @@ const Container = styled.div`
 const FileList = styled.div`
   ${SMixinFlexColumn("", "stretch")};
   gap: 1rem;
+`;
+
+const IconPreview = styled.div`
+  font-size: 32px;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 10px;
+  width: auto;
+  svg {
+    width: 1em;
+    height: 1em;
+    display: block;
+  }
 `;
 
 const UploadedFile = styled(Card)``;
