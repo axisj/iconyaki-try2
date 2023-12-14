@@ -9,12 +9,14 @@ import { SMixinFlexColumn } from "@/styles/emotion";
 import { dangerouslySetInnerHTML } from "@/util/dangerouslySetInnerHTML";
 import { generateIcon } from "@/service/generateIcon";
 import { pascalCase } from "pascal-case";
+import { useAppStore } from "@/store/useAppStore";
 
 interface Props {
   accept?: string;
 }
 
 export function SvgUploader({ accept = "*/*" }: Props) {
+  const targetPath = useAppStore((s) => s.targetPath);
   const [spinning, setSpinning] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [uploadedFiles, setUploadedFiles] = React.useState<FileDto[]>([]);
@@ -92,12 +94,13 @@ export function SvgUploader({ accept = "*/*" }: Props) {
           fileName: file.fileName,
           contents: file.rawContents,
           signal: abortController.signal,
+          targetPath: targetPath ?? "",
         });
       }
     }
     setUploading(false);
     setUploadedFiles([]);
-  }, [abortController.signal, uploadedFiles]);
+  }, [abortController.signal, targetPath, uploadedFiles]);
 
   return (
     <Container>
