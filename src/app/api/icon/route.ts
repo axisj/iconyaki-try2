@@ -3,14 +3,15 @@ import { writeFile, readFile } from "fs/promises";
 import { join } from "path";
 import xml2js from "xml2js";
 import { getIconTemplate } from "@/app/api/icon/iconTemplate";
-import { pascalCase } from "pascal-case";
+import { pascalCase } from "change-case";
 import { IconyakiData } from "@/iconyaki/@types";
 import * as fs from "fs";
 
-interface SaveIconRequest {
+export interface SaveIconRequest {
   fileName: string;
   contents: string;
   targetPath: string;
+  iconPrefix?: string;
 }
 
 interface GetIconsRequest {
@@ -20,19 +21,23 @@ interface GetIconsRequest {
 export async function POST(request: NextRequest) {
   const body: SaveIconRequest = await request.json();
 
-  if (!fs.existsSync(join(process.cwd(), body.targetPath))) {
-    fs.cpSync(join(process.cwd(), "src", "iconyaki"), join(process.cwd(), body.targetPath), { recursive: true });
+  const targetPath = body.targetPath;
+  const iconPrefix = body.iconPrefix ?? "";
+
+  if (!fs.existsSync(join(process.cwd(), targetPath))) {
+    fs.cpSync(join(process.cwd(), "src", "iconyaki"), join(process.cwd(), targetPath), { recursive: true });
   }
 
   const fileName = body.fileName.replace(/\.svg$/, "");
-  const path = join(process.cwd(), body.targetPath, "icons", pascalCase(fileName) + ".tsx");
+  const componentName = pascalCase(iconPrefix + "_" + fileName);
+  const path = join(process.cwd(), targetPath, "files", componentName + ".tsx");
 
-  const jsonString = await readFile(join(process.cwd(), body.targetPath, "data.json"), "utf-8");
+  const jsonString = await readFile(join(process.cwd(), targetPath, "data.json"), "utf-8");
   const data = JSON.parse(jsonString) as IconyakiData;
 
   data.icons.push({
-    fileName: pascalCase(fileName) + ".tsx",
-    componentName: pascalCase(fileName),
+    fileName: componentName + ".tsx",
+    componentName,
     tags: [],
     rawFileContents: body.contents,
   });
@@ -42,7 +47,7 @@ export async function POST(request: NextRequest) {
 
   const iconBody = body.contents.replace(/<svg .*>/g, "").replace(/<\/svg>/g, "");
   const fileContents = getIconTemplate({
-    fileName: pascalCase(fileName) + ".tsx",
+    fileName: componentName + ".tsx",
     viewBox: $.viewBox,
     contents: iconBody,
   });
@@ -56,13 +61,32 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const body: GetIconsRequest = await request.json();
+  const body = request.nextUrl.searchParams;
 
-  if (!fs.existsSync(join(process.cwd(), body.targetPath))) {
-    fs.cpSync(join(process.cwd(), "src", "iconyaki"), join(process.cwd(), body.targetPath), { recursive: true });
+  const targetPath = body.get("targetPath");
+  if (!targetPath) {
+    return NextResponse.json({
+      error: {
+        code: 500,
+        message: "data.json not found",
+      },
+    });
   }
 
-  const jsonString = await readFile(join(process.cwd(), body.targetPath, "data.json"), "utf-8");
+  if (!fs.existsSync(join(process.cwd(), targetPath, "data.json"))) {
+    return NextResponse.json({
+      error: {
+        code: 500,
+        message: "data.json not found",
+      },
+    });
+  }
+
+  if (!fs.existsSync(join(process.cwd(), targetPath))) {
+    fs.cpSync(join(process.cwd(), "src", "iconyaki"), join(process.cwd(), targetPath), { recursive: true });
+  }
+
+  const jsonString = await readFile(join(process.cwd(), targetPath, "data.json"), "utf-8");
   const data = JSON.parse(jsonString) as IconyakiData;
 
   return NextResponse.json(data as IconyakiData);

@@ -4,6 +4,7 @@ import "./globals.css";
 import { WrapMain } from "@/styles/wrapper";
 import { Providers } from "@/app/providers";
 import { WindowResize } from "@/components/WindowResize";
+import { ApiErrors } from "@/components/ApiErrors";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang='en'>
       <body className={inter.className}>
         <Providers>
+          <ApiErrors />
           <WrapMain>{children}</WrapMain>
         </Providers>
         <WindowResize />

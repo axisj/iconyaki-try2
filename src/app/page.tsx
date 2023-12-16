@@ -1,21 +1,15 @@
 "use client";
 import { WrapSection } from "@/styles/wrapper";
-import { useAppStore } from "@/store/useAppStore";
 import { Preference } from "@/components/Preference";
+import { Header } from "@/components/Header";
+import { IconBrowser } from "@/components/IconBrowser";
+import { ApiErrors } from "@/components/ApiErrors";
 
 export default function Page() {
-  const targetPath = useAppStore((s) => s.targetPath);
-
-  if (targetPath) {
-    return (
-      <WrapSection>
-        <h1>Page</h1>
-      </WrapSection>
-    );
-  }
-
   return (
     <WrapSection>
+      <Header />
+      <IconBrowser />
       <Preference />
     </WrapSection>
   );

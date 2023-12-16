@@ -1,6 +1,7 @@
 import { create, StateCreator } from "zustand";
 import { persist } from "zustand/middleware";
 import { Preference } from "@/components/Preference";
+import { ApiError } from "@/service/ApiError";
 
 export type ZustandSetter<T> = (partial: Partial<T>, replace?: boolean | undefined) => void;
 
@@ -14,6 +15,8 @@ export interface AppModel {
   height: number;
   iconPrefix?: string;
   targetPath?: string;
+  preferenceOpen?: boolean;
+  errors?: ApiError[];
 }
 
 interface Preference {
@@ -27,6 +30,8 @@ export interface AppActions {
   setIconPrefix: (iconPrefix?: string) => void;
   setTargetPath: (targetPath?: string) => void;
   setPreference: (preference: Preference) => void;
+  setPreferenceOpen: (preferenceOpen: boolean) => void;
+  setErrors: (errors: ApiError[]) => void;
 }
 
 export interface AppStore extends AppModel, AppActions {}
@@ -45,6 +50,8 @@ const getAppStoreActions: StoreActions<AppModel & AppActions, AppActions> = (set
   setPreference: (preference) => {
     set(preference);
   },
+  setPreferenceOpen: (openPreference) => set({ preferenceOpen: openPreference }),
+  setErrors: (errors) => set({ errors }),
 });
 
 export const useAppStore = create<AppStore>(

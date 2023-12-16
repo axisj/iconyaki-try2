@@ -1,12 +1,11 @@
-import axios from "axios";
 import { IconyakiData } from "@/iconyaki/@types";
+import { apiWrapper } from "@/service/apiWrapper";
 
-export interface GenerateIconProps {
-  targetPath: string;
+export interface GetIconProps {
+  targetPath?: string;
 }
 
-export const getIcons = async ({ targetPath }: GenerateIconProps) => {
-  const { data } = await axios.get<IconyakiData>(`/api/icon?targetPath=${targetPath}`, {});
-
+export const getIcons = async ({ targetPath }: GetIconProps) => {
+  const { data } = await apiWrapper<IconyakiData>("get", "/api/icon", { targetPath });
   return data;
 };

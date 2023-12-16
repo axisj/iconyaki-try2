@@ -2,21 +2,23 @@
 import * as React from "react";
 import styled from "@emotion/styled";
 import { FileDto } from "@/types";
-import { uploadFile } from "@/service/uploadFile";
 import { Button, Card, Descriptions, Input, Space } from "antd";
 import { toByte } from "@/util/toByte";
 import { SMixinFlexColumn } from "@/styles/emotion";
 import { dangerouslySetInnerHTML } from "@/util/dangerouslySetInnerHTML";
-import { generateIcon } from "@/service/generateIcon";
-import { pascalCase } from "pascal-case";
+import { pascalCase } from "change-case";
 import { useAppStore } from "@/store/useAppStore";
+import { useRouter } from "next/navigation";
+import service from "@/service";
 
 interface Props {
   accept?: string;
 }
 
 export function SvgUploader({ accept = "*/*" }: Props) {
+  const router = useRouter();
   const targetPath = useAppStore((s) => s.targetPath);
+  const iconPrefix = useAppStore((s) => s.iconPrefix);
   const [spinning, setSpinning] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [uploadedFiles, setUploadedFiles] = React.useState<FileDto[]>([]);
@@ -38,7 +40,7 @@ export function SvgUploader({ accept = "*/*" }: Props) {
 
         for (let i = 0; i < uploadFileCount; i++) {
           const file = event.target.files[i];
-          const data = await uploadFile({
+          const data = await service.uploadFile({
             file,
             signal: abortController.signal,
             onUploadProgress: (progressEvent) => {
@@ -54,11 +56,7 @@ export function SvgUploader({ accept = "*/*" }: Props) {
             },
           });
 
-          if (data.error) {
-            throw new Error(data.error);
-          } else {
-            uploadFiles.push(data);
-          }
+          uploadFiles.push(data);
         }
 
         setUploadedFiles([...uploadedFiles, ...uploadFiles]);
@@ -88,19 +86,26 @@ export function SvgUploader({ accept = "*/*" }: Props) {
 
   const handleGenerateIcon = React.useCallback(async () => {
     setUploading(true);
-    for await (const file of uploadedFiles) {
-      if (file.fileName && file.rawContents) {
-        await generateIcon({
-          fileName: file.fileName,
-          contents: file.rawContents,
-          signal: abortController.signal,
-          targetPath: targetPath ?? "",
-        });
+    try {
+      for await (const file of uploadedFiles) {
+        if (file.fileName && file.rawContents) {
+          await service.generateIcon({
+            fileName: file.fileName,
+            contents: file.rawContents,
+            signal: abortController.signal,
+            targetPath: targetPath ?? "",
+            iconPrefix,
+          });
+        }
       }
+      setUploading(false);
+      setUploadedFiles([]);
+      router.push("/");
+    } catch (err: any) {
+      // await errorHandling(err);
+      console.error(err);
     }
-    setUploading(false);
-    setUploadedFiles([]);
-  }, [abortController.signal, targetPath, uploadedFiles]);
+  }, [abortController.signal, iconPrefix, router, targetPath, uploadedFiles]);
 
   return (
     <Container>
@@ -136,13 +141,15 @@ export function SvgUploader({ accept = "*/*" }: Props) {
             }
           >
             <Descriptions>
-              <Descriptions.Item label='Component Name'>{pascalCase(file.fileName) + ".tsx"}</Descriptions.Item>
               <Descriptions.Item label='File Size'>{toByte(file.fileSize)}</Descriptions.Item>
+              <Descriptions.Item label='Component Name'>
+                {pascalCase(iconPrefix + "_" + file.fileName) + ".tsx"}
+              </Descriptions.Item>
             </Descriptions>
 
             <IconPreview {...dangerouslySetInnerHTML(file.rawContents)} />
 
-            <Input.TextArea rows={6} value={file.rawContents} />
+            <Input.TextArea rows={6} value={file.rawContents} onResize={() => {}} />
           </UploadedFile>
         ))}
       </FileList>

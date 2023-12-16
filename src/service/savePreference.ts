@@ -1,25 +1,17 @@
 import { AxiosProgressEvent } from "axios";
 import { apiWrapper } from "@/service/apiWrapper";
-import { SaveIconRequest } from "@/app/api/icon/route";
 
-export interface GenerateIconProps extends SaveIconRequest {
+export interface GenerateIconProps {
+  targetPath: string;
+  iconPrefix?: string;
   signal?: AbortSignal;
   onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
 }
-export const generateIcon = async ({
-  fileName,
-  contents,
-  targetPath,
-  iconPrefix,
-  signal,
-  onUploadProgress,
-}: GenerateIconProps) => {
+export const savePreference = async ({ targetPath, iconPrefix, signal, onUploadProgress }: GenerateIconProps) => {
   const { data } = await apiWrapper(
-    "post",
-    "/api/icon",
+    "put",
+    "/api/config",
     {
-      fileName,
-      contents,
       targetPath,
       iconPrefix,
     },
