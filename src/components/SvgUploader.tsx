@@ -17,8 +17,7 @@ interface Props {
 
 export function SvgUploader({ accept = "*/*" }: Props) {
   const router = useRouter();
-  const targetPath = useAppStore((s) => s.targetPath);
-  const iconPrefix = useAppStore((s) => s.iconPrefix);
+  const config = useAppStore((s) => s.config);
   const [spinning, setSpinning] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [uploadedFiles, setUploadedFiles] = React.useState<FileDto[]>([]);
@@ -93,8 +92,8 @@ export function SvgUploader({ accept = "*/*" }: Props) {
             fileName: file.fileName,
             contents: file.rawContents,
             signal: abortController.signal,
-            targetPath: targetPath ?? "",
-            iconPrefix,
+            projectName: config?.projectName ?? "",
+            iconPrefix: config?.iconPrefix,
           });
         }
       }
@@ -105,7 +104,7 @@ export function SvgUploader({ accept = "*/*" }: Props) {
       // await errorHandling(err);
       console.error(err);
     }
-  }, [abortController.signal, iconPrefix, router, targetPath, uploadedFiles]);
+  }, [abortController.signal, config, router, uploadedFiles]);
 
   return (
     <Container>
@@ -143,7 +142,7 @@ export function SvgUploader({ accept = "*/*" }: Props) {
             <Descriptions>
               <Descriptions.Item label='File Size'>{toByte(file.fileSize)}</Descriptions.Item>
               <Descriptions.Item label='Component Name'>
-                {pascalCase(iconPrefix + "_" + file.fileName) + ".tsx"}
+                {pascalCase((config?.iconPrefix ?? "") + "_" + file.fileName) + ".tsx"}
               </Descriptions.Item>
             </Descriptions>
 

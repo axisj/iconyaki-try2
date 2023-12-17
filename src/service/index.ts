@@ -1,12 +1,12 @@
 import { getIcons } from "@/service/getIcons";
 import { generateIcon } from "@/service/generateIcon";
 import { uploadFile } from "@/service/uploadFile";
-import { savePreference } from "@/service/savePreference";
+import { saveConfig } from "@/service/saveConfig";
 
 const service = {
   getIcons,
   generateIcon,
   uploadFile,
-  savePreference,
+  saveConfig,
 };
 export default service;

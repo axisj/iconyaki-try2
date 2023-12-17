@@ -13,9 +13,11 @@
 
 .iconyaki svg {
     display: inline-block;
-    stroke: currentColor;
-    fill: currentColor;
     width: 1em;
     height: 1em;
     line-height: 1;
+}
+.iconyaki svg path {
+    stroke: currentColor;
+    fill: currentColor;
 }

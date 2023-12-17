@@ -6,12 +6,12 @@ import { getIconTemplate } from "@/app/api/icon/iconTemplate";
 import { pascalCase } from "change-case";
 import { IconyakiData } from "@/iconyaki/@types";
 import * as fs from "fs";
+import { getSavePath } from "@/app/api/getSavePath";
+import { Config } from "@/types";
 
-export interface SaveIconRequest {
+export interface SaveIconRequest extends Config {
   fileName: string;
   contents: string;
-  targetPath: string;
-  iconPrefix?: string;
 }
 
 interface GetIconsRequest {
@@ -21,18 +21,14 @@ interface GetIconsRequest {
 export async function POST(request: NextRequest) {
   const body: SaveIconRequest = await request.json();
 
-  const targetPath = body.targetPath;
+  const targetPath = getSavePath(body.projectName);
   const iconPrefix = body.iconPrefix ?? "";
-
-  if (!fs.existsSync(join(process.cwd(), targetPath))) {
-    fs.cpSync(join(process.cwd(), "src", "iconyaki"), join(process.cwd(), targetPath), { recursive: true });
-  }
 
   const fileName = body.fileName.replace(/\.svg$/, "");
   const componentName = pascalCase(iconPrefix + "_" + fileName);
-  const path = join(process.cwd(), targetPath, "files", componentName + ".tsx");
+  const path = targetPath + "/files/" + componentName + ".tsx";
 
-  const jsonString = await readFile(join(process.cwd(), targetPath, "data.json"), "utf-8");
+  const jsonString = await readFile(targetPath + "/data.json", "utf-8");
   const data = JSON.parse(jsonString) as IconyakiData;
 
   data.icons.push({
@@ -53,7 +49,7 @@ export async function POST(request: NextRequest) {
   });
 
   await writeFile(path, fileContents, "utf-8");
-  await writeFile(join(process.cwd(), body.targetPath, "data.json"), JSON.stringify(data, null, 2), "utf-8");
+  await writeFile(targetPath + "/data.json", JSON.stringify(data, null, 2), "utf-8");
 
   return NextResponse.json({
     path,
@@ -63,8 +59,8 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   const body = request.nextUrl.searchParams;
 
-  const targetPath = body.get("targetPath");
-  if (!targetPath) {
+  const projectName = body.get("projectName");
+  if (!projectName) {
     return NextResponse.json({
       error: {
         code: 500,
@@ -73,7 +69,9 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  if (!fs.existsSync(join(process.cwd(), targetPath, "data.json"))) {
+  const targetPath = getSavePath(projectName);
+
+  if (!fs.existsSync(targetPath + "/data.json")) {
     return NextResponse.json({
       error: {
         code: 500,
@@ -82,11 +80,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  if (!fs.existsSync(join(process.cwd(), targetPath))) {
-    fs.cpSync(join(process.cwd(), "src", "iconyaki"), join(process.cwd(), targetPath), { recursive: true });
-  }
-
-  const jsonString = await readFile(join(process.cwd(), targetPath, "data.json"), "utf-8");
+  const jsonString = await readFile(targetPath + "/data.json", "utf-8");
   const data = JSON.parse(jsonString) as IconyakiData;
 
   return NextResponse.json(data as IconyakiData);

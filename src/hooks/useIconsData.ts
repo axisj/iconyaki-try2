@@ -3,21 +3,21 @@ import { useCallback, useEffect, useState } from "react";
 import service from "@/service";
 import { useAppStore } from "@/store/useAppStore";
 
-export function useIconsData(targetPath?: string) {
+export function useIconsData(projectName?: string) {
   const [icons, setIcons] = useState<IconyakiIcon[]>([]);
   const setErrors = useAppStore((state) => state.setErrors);
 
   const getIcons = useCallback(async () => {
     try {
-      if (!targetPath) return setIcons([]);
-      const data = await service.getIcons({ targetPath });
+      if (!projectName) return setIcons([]);
+      const data = await service.getIcons({ projectName });
 
       setIcons(data.icons);
     } catch (err: any) {
       console.error(err);
       setErrors([err]);
     }
-  }, [setErrors, targetPath]);
+  }, [setErrors, projectName]);
 
   useEffect(() => {
     getIcons().then();

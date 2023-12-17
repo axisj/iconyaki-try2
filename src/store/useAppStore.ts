@@ -1,36 +1,22 @@
 import { create, StateCreator } from "zustand";
 import { persist } from "zustand/middleware";
-import { Preference } from "@/components/Preference";
 import { ApiError } from "@/service/ApiError";
-
-export type ZustandSetter<T> = (partial: Partial<T>, replace?: boolean | undefined) => void;
-
-export type ZustandGetter<T> = () => T;
-
-export type StoreActions<T, R> = (set: ZustandSetter<T>, get: ZustandGetter<T>) => R;
+import { Config, StoreActions } from "@/types";
 
 export interface AppModel {
   loaded: boolean;
   width: number;
   height: number;
-  iconPrefix?: string;
-  targetPath?: string;
-  preferenceOpen?: boolean;
+  config?: Config;
+  configOpen?: boolean;
   errors?: ApiError[];
-}
-
-interface Preference {
-  iconPrefix?: string;
-  targetPath?: string;
 }
 
 export interface AppActions {
   setLoaded: (loaded: boolean) => void;
   setWidthHeight: (width: number, height: number) => void;
-  setIconPrefix: (iconPrefix?: string) => void;
-  setTargetPath: (targetPath?: string) => void;
-  setPreference: (preference: Preference) => void;
-  setPreferenceOpen: (preferenceOpen: boolean) => void;
+  setConfig: (configs: Config) => void;
+  setConfigOpen: (open: boolean) => void;
   setErrors: (errors: ApiError[]) => void;
 }
 
@@ -45,12 +31,10 @@ export const appInitialState: AppModel = {
 const getAppStoreActions: StoreActions<AppModel & AppActions, AppActions> = (set, get) => ({
   setLoaded: (loaded) => set({ loaded }),
   setWidthHeight: (width, height) => set({ width, height }),
-  setIconPrefix: (iconPrefix) => set({ iconPrefix }),
-  setTargetPath: (targetPath) => set({ targetPath }),
-  setPreference: (preference) => {
-    set(preference);
+  setConfig: (config) => {
+    set({ config });
   },
-  setPreferenceOpen: (openPreference) => set({ preferenceOpen: openPreference }),
+  setConfigOpen: (open) => set({ configOpen: open }),
   setErrors: (errors) => set({ errors }),
 });
 

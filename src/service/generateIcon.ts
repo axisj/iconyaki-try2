@@ -9,7 +9,7 @@ export interface GenerateIconProps extends SaveIconRequest {
 export const generateIcon = async ({
   fileName,
   contents,
-  targetPath,
+  projectName,
   iconPrefix,
   signal,
   onUploadProgress,
@@ -20,7 +20,7 @@ export const generateIcon = async ({
     {
       fileName,
       contents,
-      targetPath,
+      projectName,
       iconPrefix,
     },
     {

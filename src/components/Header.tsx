@@ -10,7 +10,7 @@ interface Props {}
 
 export function Header({}: Props) {
   const router = useRouter();
-  const setPreferenceOpen = useAppStore((s) => s.setPreferenceOpen);
+  const setPreferenceOpen = useAppStore((s) => s.setConfigOpen);
 
   // console.log(pascalCase("icon-yaki"));
   // console.log(pascalCase("icon_yaki"));

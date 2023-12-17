@@ -1,4 +1,5 @@
 import styles from "./iconyaki.module.css";
+
 interface IconYakiProps {
   iconStr: string;
   viewBox: string;
@@ -6,7 +7,7 @@ interface IconYakiProps {
   className?: string;
 }
 const withIconYaki = ({ iconStr, viewBox, role = "iconyaki", className = "iconyaki" }: IconYakiProps) => {
-  const Icon = ({ size = 24, color = "currentColor", fill = "", strokeWidth = 1 }) => {
+  return function Icon({ size = 24, color = "currentColor", fill = "", strokeWidth = 0 }) {
     return (
       <span className={styles.iconyaki}>
         <svg
@@ -17,14 +18,12 @@ const withIconYaki = ({ iconStr, viewBox, role = "iconyaki", className = "iconya
           height={size}
           strokeWidth={strokeWidth}
           fill={fill ? fill : "none"}
-          stroke={fill === "none" ? color : "currentColor"}
+          stroke={fill === "none" ? color : ""}
           dangerouslySetInnerHTML={{ __html: iconStr }}
         />
       </span>
     );
   };
-
-  return Icon;
 };
 
 export default withIconYaki;
