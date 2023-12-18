@@ -3,10 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prepare": "husky install",
+    "lint:staged": "lint-staged",
     "dev": "next dev -p 15536",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "organize-imports-cli",
+      "eslint --cache --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@emotion/css": "^11.11.2",
@@ -31,6 +40,8 @@
     "@types/xml2js": "^0.4.13",
     "eslint": "^8",
     "eslint-config-next": "14.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
     "prettier": "^3.0.3",
     "typescript": "^5"
   }
