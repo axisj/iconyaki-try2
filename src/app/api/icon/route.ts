@@ -1,21 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, readFile } from "fs/promises";
-import { join } from "path";
+import { writeFile } from "fs/promises";
 import xml2js from "xml2js";
 import { getIconTemplate } from "@/app/api/icon/iconTemplate";
 import { pascalCase } from "change-case";
-import { IconyakiData } from "@/iconyaki/@types";
-import * as fs from "fs";
 import { getSavePath } from "@/app/api/getSavePath";
 import { Config } from "@/types";
+import { v4 as uuidv4 } from "uuid";
+import { JsonRepository } from "@/app/api/JsonRepository";
+import { unlink, unlinkSync } from "fs";
 
 export interface SaveIconRequest extends Config {
   fileName: string;
   contents: string;
-}
-
-interface GetIconsRequest {
-  targetPath: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -23,20 +19,11 @@ export async function POST(request: NextRequest) {
 
   const targetPath = getSavePath(body.projectName);
   const iconPrefix = body.iconPrefix ?? "";
+  const jsonRepository = new JsonRepository(targetPath, "data.json");
 
   const fileName = body.fileName.replace(/\.svg$/, "");
   const componentName = pascalCase(iconPrefix + "_" + fileName);
   const path = targetPath + "/files/" + componentName + ".tsx";
-
-  const jsonString = await readFile(targetPath + "/data.json", "utf-8");
-  const data = JSON.parse(jsonString) as IconyakiData;
-
-  data.icons.push({
-    fileName: componentName + ".tsx",
-    componentName,
-    tags: [],
-    rawFileContents: body.contents,
-  });
 
   const jsonContents = (await xml2js.parseStringPromise(body.contents)) as Record<string, any>;
   const { $ } = jsonContents.svg;
@@ -48,8 +35,21 @@ export async function POST(request: NextRequest) {
     contents: iconBody,
   });
 
-  await writeFile(path, fileContents, "utf-8");
-  await writeFile(targetPath + "/data.json", JSON.stringify(data, null, 2), "utf-8");
+  {
+    // save data.json
+    const data = await jsonRepository.read();
+
+    data.icons.push({
+      id: uuidv4(),
+      fileName: componentName + ".tsx",
+      componentName,
+      tags: [],
+      rawFileContents: body.contents,
+    });
+
+    await writeFile(path, fileContents, "utf-8");
+    await jsonRepository.save(data);
+  }
 
   return NextResponse.json({
     path,
@@ -70,8 +70,18 @@ export async function GET(request: NextRequest) {
   }
 
   const targetPath = getSavePath(projectName);
+  const jsonRepository = new JsonRepository(targetPath, "data.json");
+  const data = await jsonRepository.read();
 
-  if (!fs.existsSync(targetPath + "/data.json")) {
+  return NextResponse.json(data);
+}
+
+export async function DELETE(request: NextRequest) {
+  const body = request.nextUrl.searchParams;
+
+  const projectName = body.get("projectName");
+  const id = body.get("id");
+  if (!projectName) {
     return NextResponse.json({
       error: {
         code: 500,
@@ -80,8 +90,18 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const jsonString = await readFile(targetPath + "/data.json", "utf-8");
-  const data = JSON.parse(jsonString) as IconyakiData;
+  const targetPath = getSavePath(projectName);
+  const jsonRepository = new JsonRepository(targetPath, "data.json");
+  const data = await jsonRepository.read();
 
-  return NextResponse.json(data as IconyakiData);
+  const deleteFileName = data.icons.find((icon) => icon.id === id)?.fileName;
+
+  data.icons = data.icons.filter((icon) => icon.id !== id);
+
+  unlinkSync(targetPath + "/files/" + deleteFileName);
+  await jsonRepository.save(data);
+
+  return NextResponse.json({
+    result: "ok",
+  });
 }

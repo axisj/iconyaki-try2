@@ -167,6 +167,7 @@ export function SvgUploader({ accept = "*/*" }: Props) {
 const Container = styled.div`
   ${SMixinFlexColumn("flex-start", "flex-start")};
   gap: 1rem;
+  padding: 8px;
 `;
 
 const FileList = styled.div`

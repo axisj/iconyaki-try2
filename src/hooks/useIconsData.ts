@@ -5,6 +5,7 @@ import { useAppStore } from "@/store/useAppStore";
 
 export function useIconsData(projectName?: string) {
   const [icons, setIcons] = useState<IconyakiIcon[]>([]);
+  const [loading, setLoading] = useState(false);
   const setErrors = useAppStore((state) => state.setErrors);
 
   const getIcons = useCallback(async () => {
@@ -30,5 +31,7 @@ export function useIconsData(projectName?: string) {
 
   return {
     icons,
+    getIcons,
+    loading,
   };
 }

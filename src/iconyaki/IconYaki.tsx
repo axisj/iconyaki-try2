@@ -6,19 +6,21 @@ interface IconYakiProps {
   role?: string;
   className?: string;
 }
+
+export interface IconProps {
+  size?: number;
+}
+
 const withIconYaki = ({ iconStr, viewBox, role = "iconyaki", className = "iconyaki" }: IconYakiProps) => {
-  return function Icon({ size = 24, color = "currentColor", fill = "", strokeWidth = 0 }) {
+  return function Icon({ size }: IconProps) {
     return (
       <span className={styles.iconyaki}>
         <svg
           role={role}
           className={className}
           viewBox={viewBox}
-          width={size}
-          height={size}
-          strokeWidth={strokeWidth}
-          fill={fill ? fill : "none"}
-          stroke={fill === "none" ? color : ""}
+          style={{ fontSize: size }}
+          strokeWidth={0}
           dangerouslySetInnerHTML={{ __html: iconStr }}
         />
       </span>

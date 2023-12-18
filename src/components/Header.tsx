@@ -25,10 +25,8 @@ export function Header({}: Props) {
       <Logo>IconYaki</Logo>
       <SearchWrap></SearchWrap>
       <Control>
-        <Button size={"small"} onClick={() => setPreferenceOpen(true)}>
-          Preference
-        </Button>
-        <Button size={"small"} type={"primary"} onClick={() => router.push("/upload")}>
+        <Button onClick={() => setPreferenceOpen(true)}>Preference</Button>
+        <Button type={"primary"} onClick={() => router.push("/upload")}>
           Upload
         </Button>
       </Control>
