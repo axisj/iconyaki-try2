@@ -39,25 +39,33 @@ export async function POST(request: NextRequest) {
     // save data.json
     const data = await jsonRepository.read();
 
-    data.icons.push({
-      id: uuidv4(),
-      fileName: componentName + ".tsx",
-      componentName,
-      tags: [],
-      rawFileContents: body.contents,
-    });
+    const existIconIndex = data.icons.findIndex((icon) => icon.componentName === componentName);
+
+    if (existIconIndex === -1) {
+      data.icons.push({
+        id: uuidv4(),
+        fileName: componentName + ".tsx",
+        componentName,
+        tags: [],
+        rawFileContents: body.contents,
+      });
+    } else {
+      data.icons[existIconIndex] = {
+        ...data.icons[existIconIndex],
+        rawFileContents: body.contents,
+      };
+    }
 
     await writeFile(path, fileContents, "utf-8");
     await writeFile(
       targetPath + "/index.tsx",
-      data.icons
-        .map((icon) => {
-          return `export { default as ${icon.componentName} } from "./files/${icon.componentName}";`;
+      Array.from(new Set(data.icons.map((icon) => icon.componentName)))
+        .map((componentName) => {
+          return `export { default as ${componentName} } from "./files/${componentName}";`;
         })
         .join("\n"),
       "utf-8",
     );
-
     await jsonRepository.save(data);
   }
 
@@ -111,9 +119,9 @@ export async function DELETE(request: NextRequest) {
   unlinkSync(targetPath + "/files/" + deleteFileName);
   await writeFile(
     targetPath + "/index.tsx",
-    data.icons
-      .map((icon) => {
-        return `export { default as ${icon.componentName} } from "./files/${icon.componentName}";`;
+    Array.from(new Set(data.icons.map((icon) => icon.componentName)))
+      .map((componentName) => {
+        return `export { default as ${componentName} } from "./files/${componentName}";`;
       })
       .join("\n"),
     "utf-8",
