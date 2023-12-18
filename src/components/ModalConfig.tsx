@@ -46,7 +46,7 @@ export const ModalConfig: React.FC<ISPinIconProps> = ({ size = 20, strokeWidth =
       }}
     >
       <Container>
-        <h1>프로젝트 설정</h1>
+        <h1>Project Config</h1>
         <Divider />
         <Form form={form} layout={"vertical"} onFinish={onFinish}>
           <FormItem label='Project Name' name='projectName' rules={[{ required: true }]}>

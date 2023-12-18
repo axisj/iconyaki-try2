@@ -4,28 +4,19 @@ import { Button } from "antd";
 import { SMixinFlexRow } from "@/styles/emotion";
 import { useAppStore } from "@/store/useAppStore";
 import { useRouter } from "next/navigation";
-import { pascalCase } from "change-case";
 
 interface Props {}
 
 export function Header({}: Props) {
   const router = useRouter();
-  const setPreferenceOpen = useAppStore((s) => s.setConfigOpen);
-
-  // console.log(pascalCase("icon-yaki"));
-  // console.log(pascalCase("icon_yaki"));
-  // console.log(pascalCase("icon.yaki"));
-  // console.log(pascalCase(" yakiTest"));
-  // console.log(pascalCase(" yakitest"));
-  // console.log(pascalCase(" yaki$test"));
-  // console.log(pascalCase("_yaki$test"));
+  const setConfigOpen = useAppStore((s) => s.setConfigOpen);
 
   return (
     <Container>
       <Logo>IconYaki</Logo>
       <SearchWrap></SearchWrap>
       <Control>
-        <Button onClick={() => setPreferenceOpen(true)}>Preference</Button>
+        <Button onClick={() => setConfigOpen(true)}>Config</Button>
         <Button type={"primary"} onClick={() => router.push("/upload")}>
           Upload
         </Button>
