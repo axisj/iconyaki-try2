@@ -35,3 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /.idea/
+src/output/**/*.tsx
+src/output/**/*.ts
+src/output/**/*.json
+src/output/**/*.css
