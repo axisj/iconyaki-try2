@@ -10,25 +10,29 @@ Introducing 'iconyaki,' a tool designed to provide frontend developers with the 
 
 ## How to Use iconyaki
 
-
 ### 1. Install development dependencies & run the development server
+
 ```shell
 npm install
 npm run dev
 ```
 
 ### 2. Enter the Project Name & Icon Prefix Name
+
 Click the 'Config' button at the page header to enter the project name and icon prefix name.
 
 ### 3. Upload your SVG file
-Click the 'Upload' button at the page header to upload your SVG file. 
+
+Click the 'Upload' button at the page header to upload your SVG file.
 and check the 'Icon List' section to see the list of icons you uploaded.
 finally, click the 'Generate' button to generate the icon files.
 
 ### 4. Use the generated icon files
+
 You can see the index page to see the generated icon files.
 
 ## Usage Icon Files
+
 ```typescript
 import { IconBin } from "@/components/icon";
 

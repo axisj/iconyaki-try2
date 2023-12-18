@@ -9,8 +9,8 @@ import { ApiErrors } from "@/components/ApiErrors";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "IconYaki",
-  description: "React Icon Generator",
+  title: "ICONYAKI",
+  description: "Elevating Icon Transformation Experience for Frontend Developers",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
