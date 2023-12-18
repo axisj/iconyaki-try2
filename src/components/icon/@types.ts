@@ -1,4 +1,5 @@
 export interface IconyakiIcon {
+  id: string;
   fileName: string;
   componentName: string;
   tags: string[];

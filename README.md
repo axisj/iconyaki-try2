@@ -27,3 +27,16 @@ finally, click the 'Generate' button to generate the icon files.
 
 ### 4. Use the generated icon files
 You can see the index page to see the generated icon files.
+
+## Usage Icon Files
+```typescript
+import { IconBin } from "@/components/icon";
+
+const IconBinExample = () => {
+  return (
+    <div>
+      <IconBin />
+    </div>
+  );
+};
+```

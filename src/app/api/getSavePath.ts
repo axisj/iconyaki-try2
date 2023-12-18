@@ -11,7 +11,9 @@ export const getSavePath = (projectName?: string) => {
   const savePath = join(process.cwd(), "src", "output", projectName);
   if (!fs.existsSync(savePath)) {
     fs.cpSync(join(process.cwd(), "src", "iconyaki"), savePath, { recursive: true });
-    fs.mkdirSync(savePath + "/files");
+    if (!fs.existsSync(savePath + "/files")) {
+      fs.mkdirSync(savePath + "/files");
+    }
   }
   return savePath;
 };

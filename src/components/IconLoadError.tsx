@@ -1,6 +1,7 @@
 import { Tooltip } from "antd";
-import IconWarning from "@/components/icons/files/IconWarning";
 import styled from "@emotion/styled";
+import { IconWarning } from "@/components/icon";
+import * as React from "react";
 
 interface Props {
   iconPath: string;

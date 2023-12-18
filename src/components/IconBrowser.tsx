@@ -6,11 +6,10 @@ import { useIconsData } from "@/hooks/useIconsData";
 import { useAppStore } from "@/store/useAppStore";
 import { Spin } from "antd";
 import { SMixinFlexColumn, SMixinFlexRow } from "@/styles/emotion";
-import IconBin from "@/components/icons/files/IconBin";
-import IconDefaultProgram from "@/components/icons/files/IconDefaultProgram";
 import { confirmDialog } from "@/components/dialogs";
 import service from "@/service";
 import { Loading } from "@/components/Loading";
+import { IconBin, IconCodeSlash } from "@/components/icon";
 
 interface Props {}
 
@@ -58,7 +57,7 @@ export function IconBrowser({}: Props) {
           <IconCard key={key}>
             <div className={"tools"}>
               <a href={"#"}>
-                <IconDefaultProgram />
+                <IconCodeSlash />
               </a>
               <a href={"#"} onClick={() => handleDelete(icon.id)}>
                 <IconBin />

@@ -48,6 +48,16 @@ export async function POST(request: NextRequest) {
     });
 
     await writeFile(path, fileContents, "utf-8");
+    await writeFile(
+      targetPath + "/index.tsx",
+      data.icons
+        .map((icon) => {
+          return `export { default as ${icon.componentName} } from "./files/${icon.componentName}";`;
+        })
+        .join("\n"),
+      "utf-8",
+    );
+
     await jsonRepository.save(data);
   }
 
@@ -99,6 +109,16 @@ export async function DELETE(request: NextRequest) {
   data.icons = data.icons.filter((icon) => icon.id !== id);
 
   unlinkSync(targetPath + "/files/" + deleteFileName);
+  await writeFile(
+    targetPath + "/index.tsx",
+    data.icons
+      .map((icon) => {
+        return `export { default as ${icon.componentName} } from "./files/${icon.componentName}";`;
+      })
+      .join("\n"),
+    "utf-8",
+  );
+
   await jsonRepository.save(data);
 
   return NextResponse.json({
