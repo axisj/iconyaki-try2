@@ -1,37 +1,50 @@
 import * as React from "react";
 import styled from "@emotion/styled";
-import { Button } from "antd";
-import { SMixinFlexRow } from "@/styles/emotion";
-import { useAppStore } from "@/store/useAppStore";
-import { useRouter } from "next/navigation";
+import { Menu, MenuProps } from "antd";
+import { useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { MenuClickEventHandler } from "rc-menu/lib/interface";
 
 interface Props {}
 
+const itmes: MenuProps["items"] = [
+  {
+    label: "Icon Browser",
+    key: "/",
+  },
+  {
+    label: "Upload",
+    key: "/upload",
+  },
+  {
+    label: "Settings",
+    key: "/settings",
+  },
+];
+
 export function Header({}: Props) {
-  const router = useRouter();
-  const setConfigOpen = useAppStore((s) => s.setConfigOpen);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const onClick = useCallback<MenuClickEventHandler>(
+    ({ key }) => {
+      navigate(key);
+    },
+    [navigate],
+  );
 
   return (
     <Container>
-      <Logo>IconYaki</Logo>
-      <SearchWrap></SearchWrap>
-      <Control>
-        <Button onClick={() => setConfigOpen(true)}>Config</Button>
-        <Button type={"primary"} onClick={() => router.push("/upload")}>
-          Upload
-        </Button>
-      </Control>
+      <Menu
+        mode={"horizontal"}
+        items={itmes}
+        selectedKeys={[location.pathname]}
+        onClick={onClick}
+      />
     </Container>
   );
 }
 
 const Container = styled.div`
-  ${SMixinFlexRow("space-between", "center")};
   padding: 8px;
-`;
-const Logo = styled.div``;
-const SearchWrap = styled.div``;
-const Control = styled.div`
-  ${SMixinFlexRow("flex-end", "center")};
-  gap: 5px;
+  user-select: none;
 `;
