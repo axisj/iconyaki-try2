@@ -1,49 +1,50 @@
 {
-  "name": "iconyaki",
-  "version": "0.1.0",
+  "name": "my-electron-vite",
   "private": true,
+  "version": "0.0.0",
   "scripts": {
-    "prepare": "husky install",
-    "lint:staged": "lint-staged",
-    "dev": "next dev -p 15536",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "format": "prettier --write --cache ."
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "organize-imports-cli",
-      "eslint --cache --fix",
-      "prettier --write"
-    ]
+    "dev": "vite",
+    "build": "tsc && vite build && electron-builder",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/css": "^11.11.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "antd": "^5.11.0",
-    "axios": "^1.6.0",
+    "antd": "^5.12.2",
+    "axios": "^1.6.2",
     "change-case": "^5.3.0",
-    "lodash": "^4.17.21",
-    "next": "14.0.1",
-    "react": "^18",
-    "react-dom": "^18",
+    "express": "^4.18.2",
+    "idb-keyval": "^6.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.0",
     "uuid": "^9.0.1",
     "xml2js": "^0.6.2",
     "zustand": "^4.4.7"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "@types/uuid": "^9.0.6",
-    "@types/xml2js": "^0.4.13",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.1",
+    "@types/express": "^4.17.21",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "@types/uuid": "^9.0.7",
+    "@types/xml2js": "^0.4.14",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
+    "@vitejs/plugin-react": "^4.0.4",
+    "electron": "^26.1.0",
+    "electron-builder": "^24.6.4",
+    "eslint": "^8.48.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
-    "prettier": "^3.0.3",
-    "typescript": "^5"
-  }
+    "prettier": "^3.1.1",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.1",
+    "vite-plugin-electron": "^0.14.0",
+    "vite-plugin-electron-renderer": "^0.14.5"
+  },
+  "main": "dist-electron/main.js"
 }

@@ -1,17 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+import express from "express";
 import xml2js from "xml2js";
-import { FileDto } from "@/types";
+import { FileDto } from "../types";
 
 const xmlBuilder = new xml2js.Builder({
   headless: true,
 });
 
-export async function POST(request: NextRequest) {
-  const data = await request.formData();
-  const file: File | null = data.get("file") as unknown as File;
+const router = express.Router();
+
+router.post("/upload", async (req, res) => {
+  const file: File | null = req.body.file;
 
   if (!file) {
-    return NextResponse.json({
+    return res.json({
       error: {
         message: "file is empty",
       },
@@ -23,7 +24,10 @@ export async function POST(request: NextRequest) {
   const fileName = file.name;
   const fileSize = file.size;
   const rawContents = buffer.toString("utf-8");
-  const jsonContents = (await xml2js.parseStringPromise(rawContents)) as Record<string, any>;
+  const jsonContents = (await xml2js.parseStringPromise(rawContents)) as Record<
+    string,
+    any
+  >;
   const { $, metadata, title, desc, defs, ...rest } = jsonContents.svg;
   const trimJson: Record<string, any> = {
     svg: {
@@ -37,7 +41,14 @@ export async function POST(request: NextRequest) {
 
   const xml = xmlBuilder.buildObject(trimJson);
 
-  const uploadedFile: FileDto = { fileName, fileSize, rawContents: xml, jsonContents: trimJson };
+  const uploadedFile: FileDto = {
+    fileName,
+    fileSize,
+    rawContents: xml,
+    jsonContents: trimJson,
+  };
 
-  return NextResponse.json(uploadedFile);
-}
+  return res.json(uploadedFile);
+});
+
+export default router;
