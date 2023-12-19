@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { ApiError } from "@/service/ApiError";
+import { ApiError } from "./ApiError";
 
 export const API_URL = "";
 

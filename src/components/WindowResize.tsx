@@ -1,5 +1,4 @@
-"use client";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppStore } from "../store/useAppStore";
 import { useCallback, useEffect } from "react";
 
 export const WindowResize = () => {

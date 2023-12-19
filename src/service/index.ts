@@ -1,8 +1,8 @@
-import { getIcons } from "@/service/getIcons";
-import { generateIcon } from "@/service/generateIcon";
-import { uploadFile } from "@/service/uploadFile";
-import { saveConfig } from "@/service/saveConfig";
-import { deleteIcons } from "@/service/deleteIcons";
+import { getIcons } from "./getIcons";
+import { generateIcon } from "./generateIcon";
+import { uploadFile } from "./uploadFile";
+import { saveConfig } from "./saveConfig";
+import { deleteIcons } from "./deleteIcons";
 
 const service = {
   getIcons,

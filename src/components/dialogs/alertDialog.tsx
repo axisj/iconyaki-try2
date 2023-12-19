@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Modal } from "antd";
-import { dangerouslySetInnerHTML } from "@/util/dangerouslySetInnerHTML";
+import { dangerouslySetInnerHTML } from "../../util/dangerouslySetInnerHTML";
 
 export interface IAlertDialogOptions {
   title?: string | React.ReactNode;
@@ -19,7 +19,11 @@ export const alertDialog = (
 
     const modalContent =
       typeof options.content === "string" ? (
-        <span {...dangerouslySetInnerHTML(options.content.replace(/[<>\\/'"-]/g, "\\$&"))} />
+        <span
+          {...dangerouslySetInnerHTML(
+            options.content.replace(/[<>\\/'"-]/g, "\\$&"),
+          )}
+        />
       ) : (
         options.content
       );

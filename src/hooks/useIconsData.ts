@@ -1,12 +1,10 @@
-import { IconyakiIcon } from "@/iconyaki/@types";
+import { IconyakiIcon } from "../iconyaki/@types";
 import { useCallback, useEffect, useState } from "react";
-import service from "@/service";
-import { useAppStore } from "@/store/useAppStore";
+import service from "../service";
 
 export function useIconsData(projectName?: string) {
   const [icons, setIcons] = useState<IconyakiIcon[]>([]);
   const [loading, setLoading] = useState(false);
-  const setErrors = useAppStore((state) => state.setErrors);
 
   const getIcons = useCallback(async () => {
     try {
@@ -16,18 +14,16 @@ export function useIconsData(projectName?: string) {
       setIcons(data.icons);
     } catch (err: any) {
       console.error(err);
-      setErrors([err]);
     }
-  }, [setErrors, projectName]);
+  }, [projectName]);
 
   useEffect(() => {
     getIcons().then();
 
     return () => {
       setIcons([]);
-      setErrors([]);
     };
-  }, [getIcons, setErrors]);
+  }, [getIcons]);
 
   return {
     icons,

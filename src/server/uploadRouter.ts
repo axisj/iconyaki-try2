@@ -1,6 +1,8 @@
 import express from "express";
 import xml2js from "xml2js";
 import { FileDto } from "../types";
+import multer from "multer";
+const upload = multer();
 
 const xmlBuilder = new xml2js.Builder({
   headless: true,
@@ -8,8 +10,8 @@ const xmlBuilder = new xml2js.Builder({
 
 const router = express.Router();
 
-router.post("/upload", async (req, res) => {
-  const file: File | null = req.body.file;
+router.post("/upload", upload.single("file"), async (req, res) => {
+  const file: Express.Multer.File | undefined = req.file;
 
   if (!file) {
     return res.json({
@@ -19,9 +21,11 @@ router.post("/upload", async (req, res) => {
     });
   }
 
-  const bytes = await file.arrayBuffer();
+  console.log(file);
+
+  const bytes = file.buffer;
   const buffer = Buffer.from(bytes);
-  const fileName = file.name;
+  const fileName = file.originalname;
   const fileSize = file.size;
   const rawContents = buffer.toString("utf-8");
   const jsonContents = (await xml2js.parseStringPromise(rawContents)) as Record<

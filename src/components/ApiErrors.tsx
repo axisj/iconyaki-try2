@@ -1,7 +1,6 @@
-"use client";
 import * as React from "react";
 import styled from "@emotion/styled";
-import { useAppStore } from "@/store/useAppStore";
+import { useAppStore } from "../store/useAppStore";
 import { Alert } from "antd";
 
 interface Props {}
@@ -19,7 +18,7 @@ export function ApiErrors({}: Props) {
           <Alert
             key={index}
             message={error.message}
-            type='error'
+            type="error"
             closable
             onClose={() => {
               // TODO: Fix this : 에러를 모두 초기화 하는 코드 개선 필요

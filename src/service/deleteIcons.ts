@@ -1,5 +1,5 @@
-import { IconyakiData } from "@/iconyaki/@types";
-import { apiWrapper } from "@/service/apiWrapper";
+import { IconyakiData } from "../iconyaki/@types";
+import { apiWrapper } from "./apiWrapper.ts";
 
 export interface DeleteIconProps {
   projectName: string;
@@ -7,6 +7,8 @@ export interface DeleteIconProps {
 }
 
 export const deleteIcons = async (props: DeleteIconProps) => {
-  const { data } = await apiWrapper<IconyakiData>("delete", "/api/icon", { ...props });
+  const { data } = await apiWrapper<IconyakiData>("delete", "/api/icon", {
+    ...props,
+  });
   return data;
 };

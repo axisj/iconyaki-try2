@@ -1,12 +1,16 @@
 import axios, { AxiosProgressEvent } from "axios";
-import { FileDto } from "@/types";
+import { FileDto } from "../types";
 
 export interface UploadFileProps {
   file: File;
   signal?: AbortSignal;
   onUploadProgress?: (progressEvent: AxiosProgressEvent) => void;
 }
-export const uploadFile = async ({ file, signal, onUploadProgress }: UploadFileProps) => {
+export const uploadFile = async ({
+  file,
+  signal,
+  onUploadProgress,
+}: UploadFileProps) => {
   const formData = new FormData();
   formData.append("file", file);
 
