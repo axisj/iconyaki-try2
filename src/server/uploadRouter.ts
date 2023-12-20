@@ -21,8 +21,6 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     });
   }
 
-  console.log(file);
-
   const bytes = file.buffer;
   const buffer = Buffer.from(bytes);
   const fileName = file.originalname;
@@ -46,7 +44,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
   const xml = xmlBuilder.buildObject(trimJson);
 
   const uploadedFile: FileDto = {
-    fileName,
+    fileName: fileName,
     fileSize,
     rawContents: xml,
     jsonContents: trimJson,

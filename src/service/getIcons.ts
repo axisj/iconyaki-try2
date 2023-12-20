@@ -1,13 +1,14 @@
-import { IconyakiData } from "../iconyaki/@types";
-import { apiWrapper } from "./apiWrapper";
+import { JsonRepository } from "../util/JsonRepository.ts";
 
 export interface GetIconProps {
   projectName?: string;
 }
 
 export const getIcons = async ({ projectName }: GetIconProps) => {
-  const { data } = await apiWrapper<IconyakiData>("get", "/api/icon", {
-    projectName,
-  });
-  return data;
+  if (!projectName) {
+    throw new Error("projectName is required");
+  }
+
+  const jsonRepository = new JsonRepository(projectName);
+  return jsonRepository.read();
 };

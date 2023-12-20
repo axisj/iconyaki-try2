@@ -6,59 +6,84 @@ import { useIconsData } from "../../hooks/useIconsData.ts";
 import { confirmDialog } from "../../components/dialogs";
 import service from "../../service";
 import { IconBin, IconCodeSlash } from "../../components/icon";
+import Icon from "../../iconyaki/IconYaki.tsx";
+import { Popconfirm } from "antd";
 
 interface Props {}
 
 export default function App({}: Props) {
-  const config = useAppStore((s) => s.config);
-  const { icons, getIcons, loading } = useIconsData(config?.projectName);
+  const currentProject = useAppStore((s) => s.currentProject);
+
+  const { icons, getIcons, loading } = useIconsData(currentProject);
 
   const handleDelete = React.useCallback(
     async (id: string) => {
-      if (config?.projectName === undefined) return;
+      if (currentProject === undefined) return;
       try {
-        await confirmDialog({
-          content: "Are you sure you want to delete this icon?",
-        });
         await service.deleteIcons({
-          projectName: config.projectName,
+          projectName: currentProject,
           id,
         });
         await getIcons();
-      } catch (err) {}
+      } catch (err) {
+        //
+      }
     },
-    [config?.projectName, getIcons],
+    [currentProject, getIcons],
   );
 
   return (
     <Container>
-      <h1>Browser</h1>
-
-      {icons.map((icon, key) => {
-        return (
-          <IconCard key={key}>
-            <div className={"tools"}>
-              <a href={"#"}>
-                <IconCodeSlash />
-              </a>
-              <a href={"#"} onClick={() => handleDelete(icon.id)}>
-                <IconBin />
-              </a>
-            </div>
-            <IconWrap>{icon.componentName}</IconWrap>
-            <IconMeta>{icon.componentName}</IconMeta>
-          </IconCard>
-        );
-      })}
+      <IconCardWrap>
+        <IconList>
+          {icons.map((icon, key) => {
+            const IconPreview = Icon({
+              iconStr: icon.svgBody,
+              viewBox: "0 0 24 24",
+            });
+            return (
+              <IconCard key={key}>
+                <div className={"tools"}>
+                  <Popconfirm
+                    title={"Are you sure you want to delete this icon?"}
+                    onConfirm={() => handleDelete(icon.id)}
+                  >
+                    <a href={"#"}>
+                      <IconBin />
+                    </a>
+                  </Popconfirm>
+                </div>
+                <IconWrap>
+                  <IconPreview />
+                </IconWrap>
+                <IconMeta>{icon.componentName}</IconMeta>
+              </IconCard>
+            );
+          })}
+        </IconList>
+      </IconCardWrap>
     </Container>
   );
 }
 
 const Container = styled.div`
+  ${SMixinFlexColumn("stretch", "stretch")};
+  flex: 1;
+  overflow: hidden;
+`;
+
+const IconCardWrap = styled.div`
+  overflow: auto;
+  flex: 1;
+  background: #eee;
+  padding: 8px;
+`;
+const IconList = styled.div`
   display: grid;
   gap: 8px;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
 `;
+
 const IconCard = styled.div`
   ${SMixinFlexColumn("stretch", "stretch")};
   border: 1px solid #ccc;
@@ -74,8 +99,9 @@ const IconCard = styled.div`
     display: none;
 
     a {
+      color: var(--txt-body);
       &:hover {
-        color: var(--primary);
+        color: var(--txt-link-hover);
       }
     }
   }
@@ -90,7 +116,7 @@ const IconCard = styled.div`
 const IconWrap = styled.div`
   ${SMixinFlexColumn("center", "center")};
   padding: 16px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--border-color);
   font-size: 30px;
   flex: 1;
 `;

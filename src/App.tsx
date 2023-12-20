@@ -1,6 +1,7 @@
 import PageRoute from "./router/PageRoute.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { Suspense } from "react";
+import "./global.css";
 
 function App() {
   return (

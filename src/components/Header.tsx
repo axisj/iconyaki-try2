@@ -16,10 +16,6 @@ const itmes: MenuProps["items"] = [
     label: "Upload",
     key: "/upload",
   },
-  {
-    label: "Settings",
-    key: "/settings",
-  },
 ];
 
 export function Header({}: Props) {
@@ -45,6 +41,6 @@ export function Header({}: Props) {
 }
 
 const Container = styled.div`
-  padding: 8px;
   user-select: none;
+  border-bottom: 1px solid var(--border-color);
 `;

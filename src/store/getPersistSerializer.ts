@@ -49,10 +49,7 @@ export function getPersistSerializer<T>(
         }
       },
       setItem: async (name, value) => {
-        const storageValue = JSON.stringify(value, replacer);
-
-        console.log(`store-${storeName} getItem`, name, storageValue);
-        await set(name, storageValue);
+        await set(name, JSON.stringify(value, replacer));
       },
       removeItem: async (name) => {
         await del(name);

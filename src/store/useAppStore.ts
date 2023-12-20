@@ -3,17 +3,24 @@ import { persist } from "zustand/middleware";
 import { Config, StoreActions } from "../types";
 import { getPersistSerializer } from "./getPersistSerializer.ts";
 
+interface Project {
+  label: string;
+  value: string;
+}
+
 export interface AppModel {
   loaded: boolean;
   width: number;
   height: number;
-  config?: Config;
+  currentProject?: string;
+  projects?: Project[];
 }
 
 export interface AppActions {
   setLoaded: (loaded: boolean) => void;
   setWidthHeight: (width: number, height: number) => void;
-  setConfig: (configs: Config) => void;
+  setProjects: (projects: Project[]) => void;
+  setCurrentProject: (project?: string) => void;
 }
 
 export interface AppStore extends AppModel, AppActions {}
@@ -30,8 +37,11 @@ const getAppStoreActions: StoreActions<AppModel & AppActions, AppActions> = (
 ) => ({
   setLoaded: (loaded) => set({ loaded }),
   setWidthHeight: (width, height) => set({ width, height }),
-  setConfig: (config) => {
-    set({ config });
+  setProjects: (projects) => {
+    set({ projects });
+  },
+  setCurrentProject: (project) => {
+    set({ currentProject: project });
   },
 });
 
